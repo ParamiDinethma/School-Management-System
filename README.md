@@ -61,10 +61,8 @@ The application requires a SQL Server database named school\_db.
         
 
 ### **2\. Application Configuration**
-
-1.  Bashgit clone https://github.com/YourUsername/your-repo-name.gitcd your-repo-name
     
-2.  **Configure Database Connection:**
+1.  **Configure Database Connection:**
     
     *   Navigate to src/main/resources/.
         
