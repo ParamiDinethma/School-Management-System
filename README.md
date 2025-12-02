@@ -8,8 +8,6 @@ A comprehensive, web-based platform designed to digitize and streamline the acad
 
 This project is a Java-based web application built to provide a centralized system for managing student data, academic records, attendance, and communication between stakeholders. The primary goal is to replace manual administrative processes with an efficient, secure, and user-friendly digital solution, improving communication and data accessibility for principals, teachers, students, and parents. 
 
-![App Demo](assets/System.gif)
-
 
 🛠️ Technologies Used
 ---------------------
