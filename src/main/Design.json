@@ -1,0 +1,362 @@
+{
+    "designSystem": {
+      "name": "Modern Financial Dashboard",
+      "version": "1.0",
+      "description": "Clean, minimal financial interface with card-based layout and subtle visual hierarchy"
+    },
+    "colorPalette": {
+      "background": {
+        "primary": "#f5f5f7",
+        "secondary": "#ffffff",
+        "card": "#ffffff"
+      },
+      "sidebar": {
+        "background": "#1a1a1a",
+        "text": "#ffffff",
+        "icons": "#ffffff",
+        "accent": "#007aff"
+      },
+      "text": {
+        "primary": "#1d1d1f",
+        "secondary": "#86868b",
+        "muted": "#a1a1a6"
+      },
+      "accent": {
+        "positive": "#30d158",
+        "negative": "#ff3b30",
+        "warning": "#ff9500",
+        "info": "#007aff"
+      },
+      "cards": {
+        "background": "#ffffff",
+        "border": "#f2f2f7",
+        "shadow": "rgba(0, 0, 0, 0.04)"
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "primary": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+        "monospace": "'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Courier, monospace"
+      },
+      "scale": {
+        "h1": {
+          "fontSize": "32px",
+          "fontWeight": "600",
+          "lineHeight": "1.2"
+        },
+        "h2": {
+          "fontSize": "24px",
+          "fontWeight": "600",
+          "lineHeight": "1.3"
+        },
+        "h3": {
+          "fontSize": "20px",
+          "fontWeight": "500",
+          "lineHeight": "1.4"
+        },
+        "body": {
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "1.5"
+        },
+        "caption": {
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "1.4"
+        },
+        "small": {
+          "fontSize": "12px",
+          "fontWeight": "400",
+          "lineHeight": "1.3"
+        }
+      }
+    },
+    "spacing": {
+      "base": 8,
+      "scale": {
+        "xs": "4px",
+        "sm": "8px",
+        "md": "16px",
+        "lg": "24px",
+        "xl": "32px",
+        "2xl": "48px"
+      }
+    },
+    "borderRadius": {
+      "small": "8px",
+      "medium": "12px",
+      "large": "16px",
+      "card": "12px"
+    },
+    "shadows": {
+      "card": "0 2px 8px rgba(0, 0, 0, 0.04)",
+      "hover": "0 4px 16px rgba(0, 0, 0, 0.08)",
+      "focus": "0 0 0 3px rgba(0, 122, 255, 0.3)"
+    },
+    "layout": {
+      "structure": {
+        "type": "sidebar-main",
+        "sidebar": {
+          "width": "80px",
+          "position": "fixed",
+          "background": "dark",
+          "navigation": "vertical-icons"
+        },
+        "main": {
+          "marginLeft": "80px",
+          "padding": "24px",
+          "maxWidth": "1200px"
+        }
+      },
+      "grid": {
+        "columns": 12,
+        "gap": "24px",
+        "breakpoints": {
+          "mobile": "768px",
+          "tablet": "1024px",
+          "desktop": "1200px"
+        }
+      }
+    },
+    "components": {
+      "sidebar": {
+        "structure": {
+          "width": "80px",
+          "height": "100vh",
+          "background": "#1a1a1a",
+          "borderRadius": "0 16px 16px 0",
+          "padding": "16px 0"
+        },
+        "navigation": {
+          "type": "icon-based",
+          "iconSize": "24px",
+          "itemSpacing": "16px",
+          "activeState": {
+            "background": "rgba(255, 255, 255, 0.1)",
+            "borderRadius": "12px"
+          }
+        }
+      },
+      "card": {
+        "base": {
+          "background": "#ffffff",
+          "borderRadius": "12px",
+          "padding": "20px",
+          "boxShadow": "0 2px 8px rgba(0, 0, 0, 0.04)",
+          "border": "1px solid #f2f2f7"
+        },
+        "variants": {
+          "primary": {
+            "background": "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
+            "color": "#ffffff",
+            "accentColor": "#ff6b35"
+          },
+          "template": {
+            "background": "#ffffff",
+            "border": "1px solid #f2f2f7",
+            "hoverEffect": {
+              "transform": "translateY(-2px)",
+              "boxShadow": "0 4px 16px rgba(0, 0, 0, 0.08)"
+            }
+          }
+        }
+      },
+      "financialCard": {
+        "structure": {
+          "aspectRatio": "16:10",
+          "background": "gradient",
+          "padding": "20px",
+          "borderRadius": "16px"
+        },
+        "elements": {
+          "balance": {
+            "position": "top-left",
+            "fontSize": "24px",
+            "fontWeight": "600",
+            "color": "#ffffff"
+          },
+          "cardNumber": {
+            "position": "bottom-left",
+            "fontSize": "16px",
+            "fontWeight": "500",
+            "color": "rgba(255, 255, 255, 0.8)",
+            "letterSpacing": "2px"
+          },
+          "logo": {
+            "position": "top-right",
+            "size": "32px"
+          }
+        }
+      },
+      "transactionList": {
+        "structure": {
+          "itemHeight": "64px",
+          "padding": "16px 0",
+          "borderBottom": "1px solid #f2f2f7"
+        },
+        "elements": {
+          "avatar": {
+            "size": "40px",
+            "borderRadius": "50%",
+            "marginRight": "12px"
+          },
+          "content": {
+            "layout": "flex",
+            "justifyContent": "space-between",
+            "alignItems": "center"
+          },
+          "amount": {
+            "fontSize": "16px",
+            "fontWeight": "500",
+            "colorLogic": {
+              "positive": "#30d158",
+              "negative": "#1d1d1f"
+            }
+          }
+        }
+      },
+      "activityBreakdown": {
+        "structure": {
+          "itemSpacing": "16px",
+          "progressBar": {
+            "height": "4px",
+            "borderRadius": "2px",
+            "background": "#f2f2f7"
+          }
+        },
+        "categories": {
+          "icon": {
+            "size": "20px",
+            "marginRight": "12px"
+          },
+          "percentage": {
+            "fontSize": "16px",
+            "fontWeight": "600",
+            "color": "#1d1d1f"
+          }
+        }
+      },
+      "buttons": {
+        "primary": {
+          "background": "#007aff",
+          "color": "#ffffff",
+          "borderRadius": "8px",
+          "padding": "12px 24px",
+          "fontSize": "16px",
+          "fontWeight": "500"
+        },
+        "secondary": {
+          "background": "#f2f2f7",
+          "color": "#1d1d1f",
+          "borderRadius": "8px",
+          "padding": "12px 24px",
+          "fontSize": "16px",
+          "fontWeight": "500"
+        },
+        "icon": {
+          "size": "44px",
+          "borderRadius": "50%",
+          "background": "#f2f2f7",
+          "iconSize": "20px"
+        }
+      }
+    },
+    "patterns": {
+      "sectionHeaders": {
+        "fontSize": "20px",
+        "fontWeight": "600",
+        "marginBottom": "16px",
+        "color": "#1d1d1f"
+      },
+      "metaInformation": {
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "color": "#86868b",
+        "marginTop": "4px"
+      },
+      "cardGrid": {
+        "gap": "16px",
+        "columns": "repeat(auto-fit, minmax(300px, 1fr))"
+      },
+      "listItems": {
+        "padding": "12px 0",
+        "borderBottom": "1px solid #f2f2f7",
+        "lastChild": {
+          "borderBottom": "none"
+        }
+      }
+    },
+    "animations": {
+      "hover": {
+        "duration": "200ms",
+        "easing": "ease-out",
+        "properties": ["transform", "box-shadow", "background-color"]
+      },
+      "focus": {
+        "duration": "150ms",
+        "easing": "ease-out",
+        "properties": ["box-shadow", "border-color"]
+      },
+      "loading": {
+        "type": "skeleton",
+        "color": "#f2f2f7",
+        "shimmer": "rgba(255, 255, 255, 0.8)"
+      }
+    },
+    "accessibility": {
+      "focusRing": {
+        "color": "#007aff",
+        "width": "2px",
+        "offset": "2px"
+      },
+      "contrast": {
+        "minimum": "4.5:1",
+        "enhanced": "7:1"
+      }
+    },
+    "responsive": {
+      "breakpoints": {
+        "mobile": {
+          "maxWidth": "767px",
+          "sidebar": {
+            "width": "100%",
+            "height": "60px",
+            "position": "fixed",
+            "bottom": "0",
+            "navigation": "horizontal"
+          },
+          "main": {
+            "marginLeft": "0",
+            "marginBottom": "60px",
+            "padding": "16px"
+          }
+        },
+        "tablet": {
+          "minWidth": "768px",
+          "maxWidth": "1023px",
+          "cardGrid": {
+            "columns": "repeat(2, 1fr)"
+          }
+        },
+        "desktop": {
+          "minWidth": "1024px",
+          "cardGrid": {
+            "columns": "repeat(3, 1fr)"
+          }
+        }
+      }
+    },
+    "dataVisualization": {
+      "progressBars": {
+        "height": "4px",
+        "borderRadius": "2px",
+        "background": "#f2f2f7",
+        "fill": "#007aff"
+      },
+      "charts": {
+        "colors": ["#007aff", "#30d158", "#ff9500", "#ff3b30", "#5856d6"],
+        "background": "transparent",
+        "gridLines": "#f2f2f7"
+      }
+    }
+  }
