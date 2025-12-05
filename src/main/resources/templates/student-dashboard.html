@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - WSIMS</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 80px;
+            background: #1a1a1a;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            border-radius: 0 16px 16px 0;
+            transition: width 0.3s ease;
+        }
+
+        .sidebar:hover {
+            width: 260px;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 24px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .sidebar:hover .logo-text {
+            opacity: 1;
+            transform: translateX(0);
+            margin-left: 12px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 0;
+        }
+
+        .nav-section {
+            margin-bottom: 16px;
+        }
+
+        .nav-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            padding: 0 24px;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar:hover .nav-section-title {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 24px;
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .nav-text {
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .sidebar:hover .nav-text {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            margin: 0 8px;
+        }
+
+        .nav-item.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            margin: 0 8px;
+            color: #60a5fa;
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer {
+            padding: 16px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item.logout {
+            color: #ff6b6b;
+        }
+
+        .nav-item.logout:hover {
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 80px;
+            background: #f8fafc;
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar:hover + .main-content {
+            margin-left: 260px;
+        }
+
+        /* Top Header */
+        .top-header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            width: 320px;
+            padding: 12px 16px 12px 40px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #f8fafc;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            background: #f1f5f9;
+            color: #3b82f6;
+        }
+
+        .period-selector {
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .download-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .download-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        /* Dashboard Content */
+        .dashboard-container {
+            padding: 32px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: #64748b;
+            font-size: 16px;
+            margin-bottom: 32px;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .section-subtitle {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        /* Student Details */
+        .student-profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .student-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .student-info h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .student-details {
+            display: grid;
+            gap: 8px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-item i {
+            width: 16px;
+            color: #94a3b8;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .stat-icon.blue { background: #3b82f6; }
+        .stat-icon.green { background: #10b981; }
+        .stat-icon.yellow { background: #f59e0b; }
+        .stat-icon.red { background: #ef4444; }
+
+        .stat-content h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .stat-content p {
+            font-size: 12px;
+            color: #64748b;
+            margin: 0;
+        }
+
+        /* Class Days */
+        .class-days-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .class-days-label {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* Attendance Rate */
+        .attendance-rate-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .rate-toggle {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+
+        .rate-toggle-btn {
+            padding: 6px 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .rate-toggle-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .monthly-rate {
+            margin-top: 16px;
+        }
+
+        .monthly-rate-title {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .monthly-bars {
+            display: flex;
+            gap: 8px;
+            align-items: end;
+        }
+
+        .month-bar {
+            flex: 1;
+            border-radius: 4px 4px 0 0;
+            min-height: 20px;
+            display: flex;
+            align-items: end;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 500;
+            color: white;
+            padding: 4px;
+        }
+
+        .month-bar.january { background: #3b82f6; height: 60px; }
+        .month-bar.february { background: #f59e0b; height: 55px; }
+        .month-bar.march { background: #10b981; height: 45px; }
+
+        /* Summary Section */
+        .summary-bars {
+            display: flex;
+            gap: 16px;
+            align-items: end;
+        }
+
+        .summary-bar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bar-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .bar-visual {
+            width: 100%;
+            border-radius: 4px;
+            display: flex;
+            align-items: end;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            padding: 4px;
+        }
+
+        .bar-visual.blue { background: #3b82f6; height: 80px; }
+        .bar-visual.green { background: #10b981; height: 50px; }
+        .bar-visual.yellow { background: #f59e0b; height: 30px; }
+        .bar-visual.red { background: #ef4444; height: 20px; }
+
+        .bar-label {
+            font-size: 12px;
+            color: #64748b;
+            text-align: center;
+        }
+
+        /* Top Students Table */
+        .top-students-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .top-students-table th {
+            text-align: left;
+            padding: 12px 0;
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .top-students-table td {
+            padding: 12px 0;
+            font-size: 14px;
+            color: #1e293b;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .top-header {
+                padding: 16px 20px;
+            }
+
+            .search-input {
+                width: 200px;
+            }
+
+            .dashboard-container {
+                padding: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Enhanced Announcements Styles */
+        .announcements-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .announcement-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #3b82f6;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .announcement-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .announcement-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .announcement-card:hover::before {
+            opacity: 1;
+        }
+
+        .announcement-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        .announcement-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+            flex: 1;
+            line-height: 1.3;
+        }
+
+        .announcement-date {
+            font-size: 0.875rem;
+            color: #64748b;
+            background: #f8fafc;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            white-space: nowrap;
+            border: 1px solid #e2e8f0;
+            font-weight: 500;
+        }
+
+        .announcement-content {
+            color: #475569;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            /* Full content display - no truncation */
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            padding: 1rem 0;
+        }
+
+        .announcement-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .announcement-audience {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        .audience-all-users {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .audience-all-students {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .audience-all-teachers {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .audience-all-parents {
+            background: #f3e8ff;
+            color: #7c3aed;
+        }
+
+        .announcement-author {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .no-announcements {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #64748b;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 2px dashed #cbd5e1;
+        }
+
+        .no-announcements-icon {
+            font-size: 4rem;
+            color: #cbd5e1;
+            margin-bottom: 1.5rem;
+        }
+
+        .no-announcements h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-announcements p {
+            font-size: 1rem;
+            margin: 0;
+            color: #64748b;
+        }
+
+        @media (max-width: 768px) {
+            .announcement-card {
+                padding: 1.5rem;
+            }
+
+            .announcement-title {
+                font-size: 1.25rem;
+            }
+
+            .announcement-content {
+                font-size: 1rem;
+            }
+
+            .announcement-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .announcement-date {
+                margin-left: 0;
+                margin-top: 0.5rem;
+            }
+
+            .announcement-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .no-announcements {
+                padding: 3rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="logo-text">WSIMS</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="/student/dashboard" class="nav-item active">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="/student/profile" class="nav-item">
+                    <i class="fas fa-user"></i>
+                    <span class="nav-text">My Profile</span>
+                </a>
+                <a href="/student/enrollment" class="nav-item">
+                    <i class="fas fa-book-open"></i>
+                    <span class="nav-text">My Enrollments</span>
+                </a>
+                <a href="/student/attendance" class="nav-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span class="nav-text">My Attendance</span>
+                </a>
+                <a href="/student/grades" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span class="nav-text">My Grades</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-bell"></i>
+                    <span class="nav-text">Notifications</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span class="nav-text">Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="/logout" class="nav-item logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="nav-text">Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <div class="top-header">
+                <div class="header-left">
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search framework...">
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="theme-toggle">
+                        <i class="fas fa-sun"></i>
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <select class="period-selector">
+                        <option>Monthly</option>
+                        <option>Weekly</option>
+                        <option>Yearly</option>
+                    </select>
+                    <button class="download-btn">
+                        <i class="fas fa-download"></i>
+                        Download
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-container">
+                <h1 class="page-title">Student Dashboard</h1>
+                <p class="page-subtitle">Overview of your academic progress</p>
+
+                <!-- Student Overview (merged details + quick stats) -->
+                <div class="content-section" style="margin-bottom: 24px; border-radius: 16px;">
+                    <div class="section-header" style="margin-bottom: 12px;">
+                        <h2 class="section-title">Student Overview</h2>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; align-items: center;">
+                        <!-- Left: Student details -->
+                        <div>
+                            <div class="student-profile" style="margin-bottom: 12px;">
+                                <div class="student-avatar" id="studentAvatar">SW</div>
+                                <div class="student-info">
+                                    <h3 id="studentName">Student Name</h3>
+                                    <div class="student-details">
+                                        <div class="detail-item">
+                                            <i class="fas fa-id-card"></i>
+                                            <span>ID: <span id="studentId">2024-0001</span></span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <i class="fas fa-phone"></i>
+                                            <span>Number: <span id="studentPhone">(555) 123-4567</span></span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <i class="fas fa-envelope"></i>
+                                            <span>Email: <span id="studentEmail">student@example.com</span></span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span>Address: <span id="studentAddress">123 University St</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Right: compact stats + circular chart -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: center;">
+                            <div class="stat-card" style="border-radius: 12px;">
+                                <div class="stat-icon blue"><i class="fas fa-user"></i></div>
+                                <div class="stat-content"><h4 id="totalAttendance">13</h4><p>Total</p></div>
+                            </div>
+                            <div class="stat-card" style="border-radius: 12px;">
+                                <div class="stat-icon green"><i class="fas fa-clock"></i></div>
+                                <div class="stat-content"><h4 id="lateAttendance">7</h4><p>Late</p></div>
+                            </div>
+                            <div class="stat-card" style="border-radius: 12px;">
+                                <div class="stat-icon yellow"><i class="fas fa-hourglass-half"></i></div>
+                                <div class="stat-content"><h4 id="undertimeAttendance">1</h4><p>Undertime</p></div>
+                            </div>
+                            <div class="stat-card" style="border-radius: 12px;">
+                                <div class="stat-icon red"><i class="fas fa-user-times"></i></div>
+                                <div class="stat-content"><h4 id="totalAbsent">2</h4><p>Absent</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance & Class Summary (two-column) -->
+                <div class="content-grid">
+                    <!-- Attendance Rate Section with donut chart -->
+                    <div class="content-section" style="border-radius: 16px;">
+                        <div class="section-header">
+                            <h2 class="section-title">Attendance Rate</h2>
+                        </div>
+                        <div class="rate-toggle">
+                            <button class="rate-toggle-btn active">This Year</button>
+                            <button class="rate-toggle-btn">This Month</button>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:20px;">
+                            <!-- Donut chart using conic-gradient; JS can set --p -->
+                            <div class="donut" id="attendanceDonut" style="--p:56; width:110px; height:110px; border-radius:50%; background: conic-gradient(#3b82f6 calc(var(--p)*1%), #e5e7eb 0); position:relative;">
+                                <div style="position:absolute; inset:14px; background:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; color:#1e293b;">
+                                    <span id="attendanceRate">56%</span>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="monthly-rate-title" style="margin:0 0 8px 0;">Distribution (This Year)</p>
+                                <div style="display:flex; gap:12px; font-size:12px; color:#64748b;">
+                                    <span><span style="display:inline-block;width:10px;height:10px;background:#3b82f6;border-radius:2px;margin-right:6px;"></span>Present</span>
+                                    <span><span style="display:inline-block;width:10px;height:10px;background:#f59e0b;border-radius:2px;margin-right:6px;"></span>Late</span>
+                                    <span><span style="display:inline-block;width:10px;height:10px;background:#10b981;border-radius:2px;margin-right:6px;"></span>Undertime</span>
+                                    <span><span style="display:inline-block;width:10px;height:10px;background:#ef4444;border-radius:2px;margin-right:6px;"></span>Absent</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Class Days beside attendance -->
+                    <div class="content-section" style="border-radius: 16px;">
+                        <div class="section-header">
+                            <h2 class="section-title">Class Days</h2>
+                        </div>
+                        <p class="section-subtitle">This Month</p>
+                        <div class="class-days-number" id="classDays">23 Days</div>
+                        <p class="class-days-label">Total class days this month</p>
+                    </div>
+                </div>
+
+                <!-- Second Row -->
+                <div class="content-grid">
+                    <!-- Attendance Rate Section -->
+                    <div class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Attendance Rate</h2>
+                        </div>
+                        
+                        <div class="rate-toggle">
+                            <button class="rate-toggle-btn active">This Year</button>
+                            <button class="rate-toggle-btn">This Month</button>
+                        </div>
+                        
+                        <div class="attendance-rate-number" id="attendanceRate">56%</div>
+                        
+                        <div class="monthly-rate">
+                            <p class="monthly-rate-title">Monthly Rate</p>
+                            <div class="monthly-bars">
+                                <div class="month-bar january">57%</div>
+                                <div class="month-bar february">55%</div>
+                                <div class="month-bar march">45%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary Section -->
+                    <div class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Summary - <span id="summaryStudentName">Student Name</span></h2>
+                        </div>
+                        
+                        <div class="summary-bars">
+                            <div class="summary-bar">
+                                <div class="bar-value" id="summaryAttendance">13</div>
+                                <div class="bar-visual blue">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="bar-label">Attendance</div>
+                            </div>
+                            <div class="summary-bar">
+                                <div class="bar-value" id="summaryLate">07</div>
+                                <div class="bar-visual green">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="bar-label">Late</div>
+                            </div>
+                            <div class="summary-bar">
+                                <div class="bar-value" id="summaryUndertime">01</div>
+                                <div class="bar-visual yellow">
+                                    <i class="fas fa-hourglass-half"></i>
+                                </div>
+                                <div class="bar-label">Undertime</div>
+                            </div>
+                            <div class="summary-bar">
+                                <div class="bar-value" id="summaryAbsent">02</div>
+                                <div class="bar-visual red">
+                                    <i class="fas fa-user-times"></i>
+                                </div>
+                                <div class="bar-label">Absent</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <!-- Recent Announcements Section - Enhanced -->
+            <div class="content-grid">
+                <div class="content-section" style="grid-column: 1 / -1; border-radius:16px;">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-bullhorn"></i> 📢 Recent Announcements
+                        </h2>
+                        <div class="section-subtitle">Stay updated with the latest school news and important information</div>
+                    </div>
+                    
+                    <div class="announcements-container" th:if="${announcements != null and !announcements.isEmpty()}">
+                        <div class="announcement-card" th:each="announcement : ${announcements}" style="padding:1.5rem; border-radius:16px; transition:transform .2s, box-shadow .2s;">
+                            <div class="announcement-header">
+                                <h3 class="announcement-title" th:text="${announcement.title}">Announcement Title</h3>
+                                <span class="announcement-date" th:text="${#temporals.format(announcement.createdAt, 'MMM dd, yyyy HH:mm')}">Dec 15, 2024 10:30</span>
+                            </div>
+                            <!-- Full content display - no truncation -->
+                            <div class="announcement-content" th:text="${announcement.content}">Full announcement content will be displayed here without any truncation. All text will be visible to ensure students can read the complete message.</div>
+                            <div class="announcement-footer">
+                                <span class="announcement-audience" th:classappend="'audience-' + ${#strings.toLowerCase(announcement.targetAudience.name())}" th:text="${announcement.targetAudience.name().replace('_', ' ')}">All Users</span>
+                                <span class="announcement-author" th:text="'By: ' + ${announcement.createdBy}">By: Admin</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:flex-end; margin-top:12px;">
+                            <a href="#" class="btn btn-primary" style="width:auto; padding:10px 16px; border-radius:10px;">View All Announcements</a>
+                        </div>
+                    </div>
+                    
+                    <div class="no-announcements" th:if="${announcements == null or announcements.isEmpty()}">
+                        <div class="no-announcements-icon">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <h3>No new announcements at this time.</h3>
+                        <p>Check back later for important updates and news.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="/js/student-dashboard.js"></script>
+</body>
+</html>

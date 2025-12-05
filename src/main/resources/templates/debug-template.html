@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Template - WSIMS</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f5f5f5; }
+        .debug-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .debug-item { margin: 10px 0; padding: 10px; background: #f8f9fa; border-left: 4px solid #007bff; }
+        .error { border-left-color: #dc3545; background: #f8d7da; }
+        .success { border-left-color: #28a745; background: #d4edda; }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>Debug Template Test</h1>
+        
+        <div class="debug-item">
+            <h3>Model Attributes Test</h3>
+            <p><strong>Parent:</strong> <span th:text="${parent != null ? parent.username : 'NULL'}">NULL</span></p>
+            <p><strong>Child:</strong> <span th:text="${child != null ? child.username : 'NULL'}">NULL</span></p>
+            <p><strong>ChildUser:</strong> <span th:text="${childUser != null ? childUser.username : 'NULL'}">NULL</span></p>
+        </div>
+
+        <div class="debug-item">
+            <h3>Detailed ChildUser Information</h3>
+            <div th:if="${childUser != null}">
+                <p><strong>ChildUser ID:</strong> <span th:text="${childUser.id}">NULL</span></p>
+                <p><strong>ChildUser Username:</strong> <span th:text="${childUser.username}">NULL</span></p>
+                <p><strong>ChildUser First Name:</strong> <span th:text="${childUser.firstName}">NULL</span></p>
+                <p><strong>ChildUser Last Name:</strong> <span th:text="${childUser.lastName}">NULL</span></p>
+                <p><strong>ChildUser Role:</strong> <span th:text="${childUser.role != null ? childUser.role.name : 'NULL'}">NULL</span></p>
+            </div>
+            <div th:if="${childUser == null}" class="error">
+                <p><strong>ERROR:</strong> childUser is NULL!</p>
+            </div>
+        </div>
+
+        <div class="debug-item">
+            <h3>JavaScript Variable Test</h3>
+            <p>Check browser console for JavaScript variable values.</p>
+        </div>
+    </div>
+
+    <!-- Debug JavaScript -->
+    <script>
+        console.log('=== DEBUG TEMPLATE JAVASCRIPT ===');
+        console.log('Template - childUser:', /*[[${childUser}]]*/ null);
+        console.log('Template - childUser.id:', /*[[${childUser != null ? childUser.id : null}]]*/ null);
+        console.log('Template - jsChildUserId:', /*[[${jsChildUserId}]]*/ null);
+        window.childUserId = /*[[${jsChildUserId}]]*/ null;
+        console.log('Template - window.childUserId set to:', window.childUserId);
+        console.log('=== END DEBUG TEMPLATE ===');
+    </script>
+</body>
+</html>

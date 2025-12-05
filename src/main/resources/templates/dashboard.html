@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SchoolPro Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="/admin/users" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span class="nav-text">User Management</span>
+                </a>
+                <a href="/admin/announcements" class="nav-item">
+                    <i class="fas fa-bullhorn"></i>
+                    <span class="nav-text">Announcements</span>
+                </a>
+                <a href="/admin/report-templates" class="nav-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span class="nav-text">Report Templates</span>
+                </a>
+                <a href="/admin/students" class="nav-item">
+                    <i class="fas fa-user-graduate"></i>
+                    <span class="nav-text">Students</span>
+                </a>
+                <a href="/admin/teachers" class="nav-item">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span class="nav-text">Teachers</span>
+                </a>
+                <a href="/admin/courses" class="nav-item">
+                    <i class="fas fa-book"></i>
+                    <span class="nav-text">Courses</span>
+                </a>
+                <a href="/admin/subjects" class="nav-item">
+                    <i class="fas fa-book-open"></i>
+                    <span class="nav-text">Subjects</span>
+                </a>
+                <a href="/admin/enrollments" class="nav-item">
+                    <i class="fas fa-user-plus"></i>
+                    <span class="nav-text">Enrollments</span>
+                </a>
+                <a href="/admin/parent-links" class="nav-item">
+                    <i class="fas fa-link"></i>
+                    <span class="nav-text">Parent Links</span>
+                </a>
+                <a href="/admin/exam-schedules" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span class="nav-text">Exam Schedules</span>
+                </a>
+                <a href="/reports/generate" class="nav-item">
+                    <i class="fas fa-file-pdf"></i>
+                    <span class="nav-text">Generate Reports</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span class="nav-text">Settings</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="/logout" class="nav-item logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="nav-text">Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <h1>Dashboard Overview</h1>
+                    <p class="header-subtitle">Welcome back! Here's what's happening at your school today.</p>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search...">
+                    </div>
+                    <div class="user-profile">
+                        <img src="https://static.vecteezy.com/system/resources/previews/021/710/687/non_2x/principal-icon-vector.jpg" alt="Profile" class="profile-img">
+                        <span class="profile-name">Principal</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card primary">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>2,367</h3>
+                        <p>Total Students</p>
+                        <span class="stat-change positive">+12%</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card secondary">
+                    <div class="stat-icon">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>156</h3>
+                        <p>Teachers</p>
+                        <span class="stat-change positive">+3%</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card accent">
+                    <div class="stat-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>89</h3>
+                        <p>Active Courses</p>
+                        <span class="stat-change positive">+7%</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card success">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>94.2%</h3>
+                        <p>Attendance Rate</p>
+                        <span class="stat-change positive">+2.1%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="content-grid">
+                <!-- Quick Actions -->
+                <div class="card quick-actions">
+                    <div class="card-header">
+                        <h3>Quick Actions</h3>
+                        <button class="btn-more">More</button>
+                    </div>
+                    <div class="actions-grid">
+                        <button class="action-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <span>Add Student</span>
+                        </button>
+                        <button class="action-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                            </div>
+                            <span>Add Teacher</span>
+                        </button>
+                        <button class="action-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                            <span>New Course</span>
+                        </button>
+                        <button class="action-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-calendar-plus"></i>
+                            </div>
+                            <span>Mark Attendance</span>
+                        </button>
+                        <button class="action-btn" onclick="window.location.href='/reports/generate'">
+                            <div class="action-icon">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <span>Generate Reports</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recent Activities -->
+                <div class="card activities">
+                    <div class="card-header">
+                        <h3>Recent Activities</h3>
+                        <span class="total-amount">$45,345.75</span>
+                    </div>
+                    <div class="activities-list">
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">New Student Enrollment</div>
+                                <div class="activity-amount">John Smith - Grade 10</div>
+                            </div>
+                            <div class="activity-percentage">25%</div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Teacher Assignment</div>
+                                <div class="activity-amount">Ms. Johnson - Mathematics</div>
+                            </div>
+                            <div class="activity-percentage">18%</div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Course Update</div>
+                                <div class="activity-amount">Physics 101 - Updated</div>
+                            </div>
+                            <div class="activity-percentage">15%</div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Attendance Marked</div>
+                                <div class="activity-amount">Grade 12 - 95% Present</div>
+                            </div>
+                            <div class="activity-percentage">12%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Events -->
+                <div class="card events">
+                    <div class="card-header">
+                        <h3>Upcoming Events</h3>
+                        <button class="btn-more">View All</button>
+                    </div>
+                    <div class="events-list">
+                        <div class="event-item">
+                            <div class="event-date">
+                                <span class="day">15</span>
+                                <span class="month">Dec</span>
+                            </div>
+                            <div class="event-content">
+                                <h4>Parent-Teacher Meeting</h4>
+                                <p>Annual review meeting</p>
+                                <span class="event-time">2:00 PM</span>
+                            </div>
+                        </div>
+                        
+                        <div class="event-item">
+                            <div class="event-date">
+                                <span class="day">18</span>
+                                <span class="month">Dec</span>
+                            </div>
+                            <div class="event-content">
+                                <h4>Final Exams</h4>
+                                <p>Grade 12 Final Examinations</p>
+                                <span class="event-time">9:00 AM</span>
+                            </div>
+                        </div>
+                        
+                        <div class="event-item">
+                            <div class="event-date">
+                                <span class="day">22</span>
+                                <span class="month">Dec</span>
+                            </div>
+                            <div class="event-content">
+                                <h4>Holiday Break</h4>
+                                <p>Winter vacation begins</p>
+                                <span class="event-time">All Day</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Notifications -->
+                <div class="card notifications">
+                    <div class="card-header">
+                        <h3>Recent Notifications</h3>
+                        <div class="header-actions">
+                            <i class="fas fa-search"></i>
+                            <i class="fas fa-filter"></i>
+                        </div>
+                    </div>
+                    <div class="notifications-list">
+                        <div class="notification-item">
+                            <div class="notification-avatar">
+                                <i class="fas fa-bell"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">System Update</div>
+                                <div class="notification-desc">New features added to student portal</div>
+                                <div class="notification-time">2 hours ago</div>
+                            </div>
+                            <div class="notification-status new"></div>
+                        </div>
+                        
+                        <div class="notification-item">
+                            <div class="notification-avatar">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">Low Attendance Alert</div>
+                                <div class="notification-desc">Grade 9 attendance below 80%</div>
+                                <div class="notification-time">4 hours ago</div>
+                            </div>
+                            <div class="notification-status"></div>
+                        </div>
+                        
+                        <div class="notification-item">
+                            <div class="notification-avatar">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">Payment Received</div>
+                                <div class="notification-desc">Monthly fee payment completed</div>
+                                <div class="notification-time">1 day ago</div>
+                            </div>
+                            <div class="notification-status"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

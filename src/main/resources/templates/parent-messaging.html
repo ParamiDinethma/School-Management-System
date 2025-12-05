@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Inbox - WSIMS</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .messaging-container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .page-title i {
+            color: var(--accent-primary);
+        }
+        
+        
+        .messaging-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            height: calc(100vh - 200px);
+            max-height: 700px;
+        }
+        
+        .conversations-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .conversations-header {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        
+        .conversations-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0 0 15px 0;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+        
+        .conversations-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .conversation-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f1f3f4;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .conversation-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .conversation-item.selected {
+            background: #e3f2fd;
+            border-left: 4px solid var(--accent-primary);
+        }
+        
+        
+        .conversation-header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 5px;
+        }
+        
+        .conversation-teacher {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        .conversation-time {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        .conversation-preview {
+            font-size: 13px;
+            color: #6c757d;
+            margin: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        
+        .conversation-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden;
+            height: 100%;
+            min-height: 600px;
+        }
+        
+        .conversation-header {
+            background: #f8f9fa;
+            padding: 12px 20px;
+            border-bottom: 1px solid #e1e8ed;
+            display: block !important;
+            width: 100%;
+            height: 60px;
+            min-height: 60px;
+            order: 1;
+        }
+        
+        .conversation-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0 0 2px 0;
+            line-height: 1.2;
+        }
+        
+        .messages-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            display: block !important;
+            width: 100%;
+            max-height: calc(100% - 120px);
+            min-height: 400px;
+            order: 2;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            width: 100%;
+        }
+        
+        .message.received {
+            flex-direction: row;
+            justify-content: flex-start;
+        }
+        
+        .message.sent {
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+        
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .message.received .message-avatar {
+            background: #6c757d;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .message.sent .message-content {
+            background: var(--accent-primary);
+            color: white;
+            margin-left: auto;
+            margin-right: 0;
+        }
+        
+        .message.received .message-content {
+            margin-left: 0;
+            margin-right: auto;
+        }
+        
+        .message-text {
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+        .message-time {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-top: 5px;
+            text-align: right;
+        }
+        
+        .message.sent .message-time {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .message-input-container {
+            padding: 15px 20px;
+            border-top: 1px solid #e1e8ed;
+            background: white;
+            display: block !important;
+            width: 100%;
+            height: 60px;
+            min-height: 60px;
+            order: 3;
+        }
+        
+        .message-input-form {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            flex-shrink: 0;
+            min-width: 0;
+            height: 100%;
+        }
+        
+        .message-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e1e8ed;
+            border-radius: 20px;
+            resize: none;
+            font-family: inherit;
+            font-size: 14px;
+            max-height: 100px;
+            flex-shrink: 1;
+            min-width: 0;
+            height: 32px;
+        }
+        
+        .message-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .send-button {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .send-button:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+        
+        .send-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #conversationView {
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100%;
+        }
+        
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #6c757d;
+            text-align: center;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .spinner-border {
+            width: 2rem;
+            height: 2rem;
+            border-width: 0.2em;
+            color: var(--accent-primary);
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        .btn-refresh {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-refresh:hover {
+            background: #5a6268;
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        @media (max-width: 768px) {
+            .messaging-layout {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .conversations-panel {
+                height: 300px;
+                margin-bottom: 20px;
+            }
+            
+            .conversation-panel {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span style="font-weight: 700; font-size: 1.2rem;">WSIMS</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/parent/dashboard" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="/parent/announcements" class="nav-item">
+                    <i class="fas fa-bullhorn"></i>
+                    <span class="nav-text">Announcements</span>
+                </a>
+                <a href="/parent/messages" class="nav-item active">
+                    <i class="fas fa-comments"></i>
+                    <span class="nav-text">Messages</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span class="nav-text">Settings</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="/logout" class="nav-item logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="nav-text">Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="messaging-container">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-comments"></i>
+                        Messages
+                    </h1>
+                    <button type="button" class="btn btn-refresh" onclick="parentMessaging.refreshConversations()">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </button>
+                </div>
+
+                <!-- Alert Container -->
+                <div id="alertContainer"></div>
+
+                <!-- Messaging Layout -->
+                <div class="messaging-layout">
+                    <!-- Conversations Panel -->
+                    <div class="conversations-panel">
+                        <div class="conversations-header">
+                            <h3 class="conversations-title">Conversations</h3>
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="conversationSearch" placeholder="Search conversations...">
+                            </div>
+                        </div>
+                        
+                        <div class="conversations-list" id="conversationsList">
+                            <div class="loading">
+                                <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conversation Panel -->
+                    <div class="conversation-panel">
+                        <div id="emptyState" class="empty-state">
+                            <i class="fas fa-comments"></i>
+                            <h3>Select a Conversation</h3>
+                            <p>Choose a conversation from the list to view messages.</p>
+                        </div>
+
+                        <div id="conversationView" style="display: none;">
+                            <!-- Conversation Header -->
+                            <div class="conversation-header">
+                                <h2 class="conversation-title" id="conversationTitle">
+                                    <i class="fas fa-user"></i>
+                                    Conversation
+                                </h2>
+                            </div>
+
+                            <!-- Messages Container -->
+                            <div class="messages-container" id="messagesContainer">
+                                <div class="loading">
+                                    <div class="spinner-border" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Message Input -->
+                            <div class="message-input-container">
+                                <form class="message-input-form" onsubmit="parentMessaging.sendMessage(event)">
+                                    <textarea 
+                                        class="message-input" 
+                                        id="messageInput" 
+                                        placeholder="Type your reply..." 
+                                        rows="1"
+                                        required></textarea>
+                                    <button type="submit" class="send-button" id="sendButton">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Pass current user ID to JavaScript -->
+    <script th:inline="javascript">
+        window.currentUserId = /*[[${currentUser.id}]]*/ null;
+    </script>
+    <!-- Custom JavaScript -->
+    <script src="/js/parent-messaging.js"></script>
+</body>
+</html>

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - WSIMS</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Teacher Dashboard Specific Styles */
+        .teacher-dashboard-container {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #f8fafc;
+        }
+        
+        /* Welcome Header */
+        .teacher-welcome-header {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 40px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+        
+        .teacher-welcome-header h1 {
+            font-size: 2rem;
+            margin: 0 0 10px 0;
+            font-weight: 600;
+        }
+        
+        .teacher-welcome-header .date {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        /* Quick Stats */
+        .teacher-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .teacher-stat-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .teacher-stat-card .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .teacher-stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+        
+        .teacher-stat-card .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        /* Quick Actions Panel */
+        .teacher-quick-actions {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .teacher-quick-actions h2 {
+            font-size: 1.5rem;
+            color: #1e293b;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .teacher-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+        
+        .teacher-action-btn {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border: 2px solid #e2e8f0;
+            padding: 25px 20px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #1e293b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .teacher-action-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+        }
+        
+        .teacher-action-btn .action-icon {
+            font-size: 2rem;
+            color: #10b981;
+        }
+        
+        .teacher-action-btn .action-label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        /* Enhanced Announcements Section */
+        .teacher-announcements-section {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+        
+        .teacher-announcements-section h2 {
+            font-size: 1.5rem;
+            color: #1e293b;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .teacher-announcements-section h2 i {
+            color: #10b981;
+        }
+        
+        /* FULL ANNOUNCEMENT CARDS - NO TRUNCATION */
+        .teacher-announcement-card {
+            background: #ffffff;
+            border-left: 4px solid #10b981;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+        
+        .teacher-announcement-card:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+        
+        .teacher-announcement-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .teacher-announcement-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+            flex: 1;
+        }
+        
+        .teacher-announcement-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-ALL_USERS { background: #dbeafe; color: #1e40af; }
+        .badge-ALL_TEACHERS { background: #d1fae5; color: #065f46; }
+        .badge-ALL_STUDENTS { background: #e9d5ff; color: #6b21a8; }
+        .badge-ALL_PARENTS { background: #fed7aa; color: #92400e; }
+        
+        /* FULL CONTENT DISPLAY */
+        .teacher-announcement-body {
+            margin: 16px 0;
+            line-height: 1.8;
+            color: #475569;
+            font-size: 1rem;
+            /* NO height restrictions */
+            /* NO text truncation */
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .teacher-announcement-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.875rem;
+            color: #64748b;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .teacher-announcement-footer i {
+            margin-right: 6px;
+        }
+        
+        .no-announcements {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+        }
+        
+        .no-announcements i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .no-announcements h3 {
+            font-size: 1.25rem;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .teacher-dashboard-container {
+                padding: 15px;
+            }
+            
+            .teacher-welcome-header {
+                padding: 25px;
+            }
+            
+            .teacher-welcome-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .teacher-stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .teacher-actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .teacher-announcement-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar (existing system sidebar) -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/teacher/dashboard" class="nav-item active">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="/teacher/attendance" class="nav-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span class="nav-text">Attendance</span>
+                </a>
+                <a href="/teacher/grades" class="nav-item">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span class="nav-text">Grade Entry</span>
+                </a>
+                <a href="/teacher/messages" class="nav-item">
+                    <i class="fas fa-comments"></i>
+                    <span class="nav-text">Messages</span>
+                </a>
+                <a href="/teacher/reports/generate" class="nav-item">
+                    <i class="fas fa-file-pdf"></i>
+                    <span class="nav-text">Report Generation</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span class="nav-text">Settings</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="/logout" class="nav-item logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="nav-text">Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="teacher-dashboard-container">
+                <!-- Welcome Header with Stats -->
+                <div class="teacher-welcome-header">
+                    <h1 th:text="'Welcome back, ' + ${teacher?.firstName} + ' ' + ${teacher?.lastName} + '!'">
+                        Welcome back, Teacher Name!
+                    </h1>
+                    <div class="date" th:text="${#temporals.format(#temporals.createNow(), 'EEEE, MMMM dd, yyyy')}">
+                        Monday, December 15, 2024
+                    </div>
+                    
+                    <div class="teacher-stats-grid">
+                        <div class="teacher-stat-card">
+                            <div class="stat-icon">📚</div>
+                            <div class="stat-value" th:text="${totalCourses}">5</div>
+                            <div class="stat-label">My Courses</div>
+                        </div>
+                        <div class="teacher-stat-card">
+                            <div class="stat-icon">👥</div>
+                            <div class="stat-value" th:text="${totalStudents}">120</div>
+                            <div class="stat-label">Total Students</div>
+                        </div>
+                        <div class="teacher-stat-card">
+                            <div class="stat-icon">📝</div>
+                            <div class="stat-value" th:text="${pendingTasks}">3</div>
+                            <div class="stat-label">Pending Tasks</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Panel -->
+                <div class="teacher-quick-actions">
+                    <h2>Quick Actions</h2>
+                    <div class="teacher-actions-grid">
+                        <a href="/teacher/attendance" class="teacher-action-btn">
+                            <div class="action-icon"><i class="fas fa-calendar-check"></i></div>
+                            <div class="action-label">Mark Attendance</div>
+                        </a>
+                        <a href="/teacher/grades" class="teacher-action-btn">
+                            <div class="action-icon"><i class="fas fa-edit"></i></div>
+                            <div class="action-label">Enter Grades</div>
+                        </a>
+                        <a href="/admin/students" class="teacher-action-btn">
+                            <div class="action-icon"><i class="fas fa-users"></i></div>
+                            <div class="action-label">View Students</div>
+                        </a>
+                        <a href="/teacher/messages" class="teacher-action-btn">
+                            <div class="action-icon"><i class="fas fa-envelope"></i></div>
+                            <div class="action-label">Send Message</div>
+                        </a>
+                        <a href="/teacher/reports/generate" class="teacher-action-btn">
+                            <div class="action-icon"><i class="fas fa-chart-bar"></i></div>
+                            <div class="action-label">View Reports</div>
+                        </a>
+                        <a href="/admin/exam-schedules" class="teacher-action-btn">
+                            <div class="action-icon"><i class="fas fa-calendar-alt"></i></div>
+                            <div class="action-label">Exam Schedules</div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Enhanced Announcements Section - FULL CONTENT -->
+                <div class="teacher-announcements-section">
+                    <h2><i class="fas fa-bullhorn"></i> Announcements</h2>
+                    
+                    <div th:if="${announcements != null and !announcements.isEmpty()}">
+                        <div class="teacher-announcement-card" th:each="announcement : ${announcements}">
+                            <div class="teacher-announcement-header">
+                                <h3 class="teacher-announcement-title" th:text="${announcement.title}">
+                                    Announcement Title
+                                </h3>
+                                <span class="teacher-announcement-badge" 
+                                      th:classappend="'badge-' + ${announcement.targetAudience}"
+                                      th:text="${announcement.targetAudience.name().replace('_', ' ')}">
+                                    ALL TEACHERS
+                                </span>
+                            </div>
+                            
+                            <!-- FULL CONTENT - NO TRUNCATION -->
+                            <div class="teacher-announcement-body" th:text="${announcement.content}">
+                                Full announcement message content will be displayed here without any truncation. 
+                                All text will be visible to ensure teachers can read the complete message.
+                            </div>
+                            
+                            <div class="teacher-announcement-footer">
+                                <span class="announcement-date">
+                                    <i class="fas fa-calendar"></i>
+                                    <span th:text="${#temporals.format(announcement.createdAt, 'MMM dd, yyyy - hh:mm a')}">
+                                        Dec 15, 2024 - 10:30 AM
+                                    </span>
+                                </span>
+                                <span class="announcement-author">
+                                    <i class="fas fa-user"></i>
+                                    By: <span th:text="${announcement.createdBy}">Admin</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="no-announcements" th:if="${announcements == null or announcements.isEmpty()}">
+                        <i class="fas fa-bullhorn"></i>
+                        <h3>No new announcements at this time.</h3>
+                        <p>Check back later for important updates and news.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+

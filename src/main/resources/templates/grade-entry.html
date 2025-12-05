@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Entry - WSIMS</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .grade-entry-container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .page-title i {
+            color: var(--accent-primary);
+        }
+        
+        .selection-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .selection-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .selection-header i {
+            color: var(--accent-primary);
+            font-size: 1.2rem;
+        }
+        
+        .selection-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: end;
+        }
+        
+        .form-group {
+            margin-bottom: 0;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .form-select, .form-control {
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-select:focus, .form-control:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .grades-table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: none;
+        }
+        
+        .table-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .table-header i {
+            font-size: 1.2rem;
+        }
+        
+        .table-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .grades-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+        
+        .grades-table th {
+            background: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+            padding: 15px 12px;
+            text-align: center;
+            border-bottom: 2px solid #e1e8ed;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+        
+        .grades-table td {
+            padding: 12px;
+            border-bottom: 1px solid #f1f3f4;
+            vertical-align: middle;
+        }
+        
+        .grades-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .student-details {
+            flex: 1;
+        }
+        
+        .student-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+            font-size: 14px;
+        }
+        
+        .student-id {
+            font-size: 12px;
+            color: #6c757d;
+            margin: 0;
+        }
+        
+        .subject-cell {
+            text-align: center;
+            vertical-align: top;
+            min-width: 120px;
+        }
+        
+        .marks-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            font-size: 14px;
+            text-align: center;
+            min-width: 80px;
+        }
+        
+        .marks-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+        }
+        
+        .total-marks-input {
+            width: 80px;
+            padding: 8px 10px;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            font-size: 14px;
+            text-align: center;
+            background: #f8f9fa;
+        }
+        
+        .comments-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            font-size: 14px;
+            resize: vertical;
+            min-width: 150px;
+            font-family: inherit;
+        }
+        
+        .comments-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+        }
+        
+        .grade-display {
+            font-weight: 600;
+            text-align: center;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+        
+        .grade-excellent {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .grade-good {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .grade-average {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .grade-below-average {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .grade-failing {
+            background: #f5c6cb;
+            color: #721c24;
+        }
+        
+        .actions-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .actions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .actions-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .actions-title i {
+            color: var(--accent-primary);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .spinner-border {
+            width: 2rem;
+            height: 2rem;
+            border-width: 0.2em;
+            color: var(--accent-primary);
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: #6c757d;
+            text-align: center;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+            color: var(--accent-primary);
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .empty-state p {
+            margin: 0;
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .grades-table-container {
+                overflow-x: auto;
+            }
+            
+            .grades-table {
+                min-width: 800px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span style="font-weight: 700; font-size: 1.2rem;">WSIMS</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/teacher/dashboard" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="/teacher/attendance" class="nav-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span class="nav-text">Attendance</span>
+                </a>
+                
+                <a href="/teacher/grades" class="nav-item active">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span class="nav-text">Grade Entry</span>
+                </a>
+                <a href="/teacher/messages" class="nav-item">
+                    <i class="fas fa-comments"></i>
+                    <span class="nav-text">Messages</span>
+                <a href="/teacher/reports/generate" class="nav-item ">
+                    <i class="fas fa-file-pdf"></i>
+                    <span class="nav-text">Report Generation</span>
+                </a>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span class="nav-text">Settings</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="/logout" class="nav-item logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="nav-text">Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="grade-entry-container">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-clipboard-check"></i>
+                        Grade Entry
+                    </h1>
+                </div>
+
+                <!-- Alert Container -->
+                <div id="alertContainer"></div>
+
+                <!-- Selection Card -->
+                <div class="selection-card">
+                    <div class="selection-header">
+                        <i class="fas fa-filter"></i>
+                        <h2 class="selection-title">Select Course and Exam</h2>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Course</label>
+                            <select id="courseSelect" class="form-select" onchange="gradeEntry.loadStudents()">
+                                <option value="">Select a course...</option>
+                                <option th:each="course : ${teacherCourses}" 
+                                        th:value="${course.id}" 
+                                        th:text="${course.courseName}"></option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Exam Schedule</label>
+                            <select id="examSelect" class="form-select" onchange="gradeEntry.loadExistingGrades()">
+                                <option value="">Select an exam...</option>
+                                <option th:each="exam : ${activeExamSchedules}" 
+                                        th:value="${exam.id}" 
+                                        th:text="${exam.examName} + ' (' + ${exam.academicYear} + ' - ' + ${exam.semester} + ')'"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grades Table Container -->
+                <div class="grades-table-container" id="gradesTableContainer">
+                    <div class="table-header">
+                        <i class="fas fa-table"></i>
+                        <h2 class="table-title">Student Grades</h2>
+                    </div>
+                    
+                    <div class="loading" id="tableLoading">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                    
+                    <div id="tableContent" style="display: none;">
+                        <table class="grades-table" id="gradesTable">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="text-align: center;">Student</th>
+                                    <th id="marksMainHeader" colspan="1" style="text-align: center;">Marks</th>
+                                    <th id="gradesMainHeader" colspan="1" style="text-align: center;">Grades</th>
+                                    <th id="commentsMainHeader" colspan="1" style="text-align: center;">Comments</th>
+                                </tr>
+                                <tr id="subjectSubHeaders">
+                                    <!-- Subject names for marks, grades, and comments will be inserted here by JavaScript -->
+                                </tr>
+                            </thead>
+                            <tbody id="gradesTableBody">
+                                <!-- Students and grades will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Actions Container -->
+                <div class="actions-container" id="actionsContainer">
+                    <div class="actions-header">
+                        <h3 class="actions-title">
+                            <i class="fas fa-cogs"></i>
+                            Actions
+                        </h3>
+                        <div class="action-buttons">
+                            <button type="button" class="btn btn-secondary" onclick="gradeEntry.resetForm()">
+                                <i class="fas fa-undo"></i>
+                                Reset
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="gradeEntry.saveGrades()">
+                                <i class="fas fa-save"></i>
+                                Save Grades
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Pass current user ID to JavaScript -->
+    <script th:inline="javascript">
+        window.currentUserId = /*[[${currentUser.id}]]*/ null;
+    </script>
+    <!-- Custom JavaScript -->
+    <script src="/js/grade-entry.js"></script>
+</body>
+</html>

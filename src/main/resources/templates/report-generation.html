@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Academic Reports - WSIMS</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-content {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 0;
+        }
+        
+        .report-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-section h3 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn-generate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+        
+        .btn-generate:disabled {
+            opacity: 0.6;
+            transform: none;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .preview-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .preview-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .preview-item:last-child {
+            border-bottom: none;
+        }
+        
+        .preview-label {
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .preview-value {
+            color: #6b7280;
+        }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .instructions h4 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            margin-bottom: 0;
+            color: #424242;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="logo-text">WSIMS</div>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/dashboard" class="nav-item ">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="/admin/users" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span class="nav-text">User Management</span>
+                </a>
+                <a href="/admin/announcements" class="nav-item">
+                    <i class="fas fa-bullhorn"></i>
+                    <span class="nav-text">Announcements</span>
+                </a>
+                <a href="/admin/report-templates" class="nav-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span class="nav-text">Report Templates</span>
+                </a>
+                <a href="/admin/students" class="nav-item">
+                    <i class="fas fa-user-graduate"></i>
+                    <span class="nav-text">Students</span>
+                </a>
+                <a href="/admin/teachers" class="nav-item">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span class="nav-text">Teachers</span>
+                </a>
+                <a href="/admin/courses" class="nav-item">
+                    <i class="fas fa-book"></i>
+                    <span class="nav-text">Courses</span>
+                </a>
+                <a href="/admin/subjects" class="nav-item">
+                    <i class="fas fa-book-open"></i>
+                    <span class="nav-text">Subjects</span>
+                </a>
+                <a href="/admin/enrollments" class="nav-item">
+                    <i class="fas fa-user-plus"></i>
+                    <span class="nav-text">Enrollments</span>
+                </a>
+                <a href="/admin/parent-links" class="nav-item">
+                    <i class="fas fa-link"></i>
+                    <span class="nav-text">Parent Links</span>
+                </a>
+                <a href="/admin/exam-schedules" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span class="nav-text">Exam Schedules</span>
+                </a>
+                <a href="/reports/generate" class="nav-item active">
+                    <i class="fas fa-file-pdf"></i>
+                    <span class="nav-text">Generate Reports</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span class="nav-text">Settings</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="/logout" class="nav-item logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="nav-text">Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container-fluid">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1><i class="fas fa-file-pdf me-3"></i>Generate Academic Reports</h1>
+                    <p>Create and download PDF report cards for students</p>
+                </div>
+
+                <!-- Instructions -->
+                <div class="instructions">
+                    <h4><i class="fas fa-info-circle me-2"></i>Instructions</h4>
+                    <ul>
+                        <li>Select a class/grade level to filter students</li>
+                        <li>Choose the specific student for whom you want to generate a report</li>
+                        <li>Select the academic term/exam schedule</li>
+                        <li>Click "Generate Report Card" to download the PDF</li>
+                    </ul>
+                </div>
+
+                <!-- Alert Container -->
+                <div id="alertContainer"></div>
+
+                <!-- Report Generation Form -->
+                <div class="report-card">
+                    <form id="reportForm">
+                        <div class="row">
+                            <!-- Class/Grade Selection -->
+                            <div class="col-md-4">
+                                <div class="form-section">
+                                    <h3><i class="fas fa-graduation-cap"></i>Class Selection</h3>
+                                    <div class="mb-3">
+                                        <label for="gradeLevel" class="form-label">Grade Level</label>
+                                        <select class="form-select" id="gradeLevel" name="gradeLevel">
+                                            <option value="">All Grades</option>
+                                            <option value="1">Grade 1</option>
+                                            <option value="2">Grade 2</option>
+                                            <option value="3">Grade 3</option>
+                                            <option value="4">Grade 4</option>
+                                            <option value="5">Grade 5</option>
+                                            <option value="6">Grade 6</option>
+                                            <option value="7">Grade 7</option>
+                                            <option value="8">Grade 8</option>
+                                            <option value="9">Grade 9</option>
+                                            <option value="10">Grade 10</option>
+                                            <option value="11">Grade 11</option>
+                                            <option value="12">Grade 12</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Student Selection -->
+                            <div class="col-md-4">
+                                <div class="form-section">
+                                    <h3><i class="fas fa-user-graduate"></i>Student Selection</h3>
+                                    <div class="mb-3">
+                                        <label for="studentId" class="form-label">Student</label>
+                                        <select class="form-select" id="studentId" name="studentId" required>
+                                            <option value="">Select a student...</option>
+                                            <option th:each="student : ${students}" 
+                                                    th:value="${student.id}" 
+                                                    th:text="${student.firstName + ' ' + student.lastName + ' (' + student.username + ')'}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Term Selection -->
+                            <div class="col-md-4">
+                                <div class="form-section">
+                                    <h3><i class="fas fa-calendar-alt"></i>Academic Term</h3>
+                                    <div class="mb-3">
+                                        <label for="examScheduleId" class="form-label">Exam Schedule</label>
+                                        <select class="form-select" id="examScheduleId" name="examScheduleId" required>
+                                            <option value="">Select a term...</option>
+                                            <option th:each="examSchedule : ${examSchedules}" 
+                                                    th:value="${examSchedule.id}" 
+                                                    th:text="${examSchedule.examName + ' (' + examSchedule.academicYear + ')'}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="termName" class="form-label">Custom Term Name (Optional)</label>
+                                        <input type="text" class="form-control" id="termName" name="termName" 
+                                               placeholder="e.g., Mid-Term, Finals, etc.">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="templateId" class="form-label">Select a Report Template</label>
+                                        <select class="form-select" id="templateId" name="templateId">
+                                            <option value="">Default Template</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preview Section -->
+                        <div class="preview-section" id="previewSection" style="display: none;">
+                            <h4><i class="fas fa-eye me-2"></i>Report Preview</h4>
+                            <div id="previewContent">
+                                <!-- Preview content will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- Generate Button -->
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-generate" id="generateBtn">
+                                <i class="fas fa-download me-2"></i>Generate Report Card
+                            </button>
+                        </div>
+
+                        <!-- Loading Spinner -->
+                        <div class="loading-spinner" id="loadingSpinner">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Generating PDF...</span>
+                            </div>
+                            <p class="mt-2">Generating PDF report card...</p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        class ReportGenerator {
+            constructor() {
+                this.students = [];
+                this.examSchedules = [];
+                this.init();
+            }
+
+            init() {
+                this.loadInitialData();
+                this.setupEventListeners();
+            }
+
+            async loadInitialData() {
+                try {
+                    // Load exam schedules
+                    const examResponse = await fetch('/reports/api/exam-schedules');
+                    if (examResponse.ok) {
+                        this.examSchedules = await examResponse.json();
+                    }
+
+                    // Load students
+                    const studentResponse = await fetch('/reports/api/students');
+                    if (studentResponse.ok) {
+                        this.students = await studentResponse.json();
+                        this.updateStudentDropdown();
+                    }
+
+                    // Load active report templates
+                    const tmplResponse = await fetch('/reports/api/templates');
+                    if (tmplResponse.ok) {
+                        this.templates = await tmplResponse.json();
+                        this.updateTemplateDropdown();
+                    }
+                } catch (error) {
+                    console.error('Error loading initial data:', error);
+                    this.showAlert('Error loading data', 'danger');
+                }
+            }
+
+            setupEventListeners() {
+                // Grade level change event
+                document.getElementById('gradeLevel').addEventListener('change', (e) => {
+                    this.filterStudentsByGrade(e.target.value);
+                });
+
+                // Student selection change event
+                document.getElementById('studentId').addEventListener('change', (e) => {
+                    this.updatePreview();
+                });
+
+                // Exam schedule change event
+                document.getElementById('examScheduleId').addEventListener('change', (e) => {
+                    this.updatePreview();
+                });
+
+                // Form submission
+                document.getElementById('reportForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.generateReport();
+                });
+            }
+
+            async filterStudentsByGrade(gradeLevel) {
+                try {
+                    let url = '/reports/api/students';
+                    if (gradeLevel) {
+                        url += `?gradeLevel=${gradeLevel}`;
+                    }
+
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        this.students = await response.json();
+                        this.updateStudentDropdown();
+                        this.updatePreview();
+                    }
+                } catch (error) {
+                    console.error('Error filtering students:', error);
+                    this.showAlert('Error filtering students', 'danger');
+                }
+            }
+
+            updateStudentDropdown() {
+                const studentSelect = document.getElementById('studentId');
+                const currentValue = studentSelect.value;
+                
+                studentSelect.innerHTML = '<option value="">Select a student...</option>';
+                
+                this.students.forEach(student => {
+                    const option = document.createElement('option');
+                    option.value = student.id;
+                    option.textContent = `${student.firstName} ${student.lastName} (${student.username})`;
+                    studentSelect.appendChild(option);
+                });
+
+                // Restore previous selection if it still exists
+                if (currentValue && this.students.find(s => s.id == currentValue)) {
+                    studentSelect.value = currentValue;
+                }
+            }
+
+            updateTemplateDropdown() {
+                const select = document.getElementById('templateId');
+                const currentValue = select.value;
+                // keep default option
+                // append active templates
+                (this.templates || []).forEach(t => {
+                    const op = document.createElement('option');
+                    op.value = t.id;
+                    op.textContent = t.templateName;
+                    select.appendChild(op);
+                });
+                if (currentValue) select.value = currentValue;
+            }
+
+            updatePreview() {
+                const studentId = document.getElementById('studentId').value;
+                const examScheduleId = document.getElementById('examScheduleId').value;
+                const previewSection = document.getElementById('previewSection');
+                const previewContent = document.getElementById('previewContent');
+
+                if (studentId && examScheduleId) {
+                    const student = this.students.find(s => s.id == studentId);
+                    const examSchedule = this.examSchedules.find(e => e.id == examScheduleId);
+
+                    if (student && examSchedule) {
+                        previewContent.innerHTML = `
+                            <div class="preview-item">
+                                <span class="preview-label">Student:</span>
+                                <span class="preview-value">${student.firstName} ${student.lastName} (${student.username})</span>
+                            </div>
+                            <div class="preview-item">
+                                <span class="preview-label">Grade Level:</span>
+                                <span class="preview-value">Grade ${student.gradeLevel || 'N/A'}</span>
+                            </div>
+                            <div class="preview-item">
+                                <span class="preview-label">Exam Schedule:</span>
+                                <span class="preview-value">${examSchedule.examName} (${examSchedule.academicYear})</span>
+                            </div>
+                            <div class="preview-item">
+                                <span class="preview-label">Period:</span>
+                                <span class="preview-value">${examSchedule.startDate} - ${examSchedule.endDate}</span>
+                            </div>
+                        `;
+                        previewSection.style.display = 'block';
+                    }
+                } else {
+                    previewSection.style.display = 'none';
+                }
+            }
+
+            async generateReport() {
+                const form = document.getElementById('reportForm');
+                const formData = new FormData(form);
+                
+                const studentId = formData.get('studentId');
+                const examScheduleId = formData.get('examScheduleId');
+                const termName = formData.get('termName');
+                const templateId = formData.get('templateId');
+
+                if (!studentId || !examScheduleId) {
+                    this.showAlert('Please select both a student and an exam schedule', 'warning');
+                    return;
+                }
+
+                // Show loading state
+                this.setLoadingState(true);
+
+                try {
+                    // Create form data for POST request
+                    const postData = new URLSearchParams();
+                    postData.append('studentId', studentId);
+                    postData.append('examScheduleId', examScheduleId);
+                    if (termName) {
+                        postData.append('termName', termName);
+                    }
+                    if (templateId) {
+                        postData.append('templateId', templateId);
+                    }
+
+                    const response = await fetch('/reports/generate-pdf', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: postData
+                    });
+
+                    if (response.ok) {
+                        // Get filename from Content-Disposition header
+                        const contentDisposition = response.headers.get('Content-Disposition');
+                        let filename = 'report_card.pdf';
+                        if (contentDisposition) {
+                            const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+                            if (filenameMatch) {
+                                filename = filenameMatch[1];
+                            }
+                        }
+
+                        // Download the PDF
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+
+                        this.showAlert('Report card generated successfully!', 'success');
+                    } else {
+                        const errorText = await response.text();
+                        this.showAlert('Error generating report: ' + errorText, 'danger');
+                    }
+                } catch (error) {
+                    console.error('Error generating report:', error);
+                    this.showAlert('Error generating report: ' + error.message, 'danger');
+                } finally {
+                    this.setLoadingState(false);
+                }
+            }
+
+            setLoadingState(loading) {
+                const generateBtn = document.getElementById('generateBtn');
+                const loadingSpinner = document.getElementById('loadingSpinner');
+                
+                if (loading) {
+                    generateBtn.disabled = true;
+                    loadingSpinner.style.display = 'block';
+                } else {
+                    generateBtn.disabled = false;
+                    loadingSpinner.style.display = 'none';
+                }
+            }
+
+            showAlert(message, type) {
+                const alertContainer = document.getElementById('alertContainer');
+                const alertId = 'alert-' + Date.now();
+                
+                const alertHTML = `
+                    <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+                
+                alertContainer.insertAdjacentHTML('beforeend', alertHTML);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    const alertElement = document.getElementById(alertId);
+                    if (alertElement) {
+                        alertElement.remove();
+                    }
+                }, 5000);
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            new ReportGenerator();
+        });
+    </script>
+</body>
+</html>
